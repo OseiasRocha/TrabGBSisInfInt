@@ -6,7 +6,7 @@ class City:
         self.y = y
     
     def distance(self, city):
-        return np.sqrt(abs(self.x - city.x) + abs(self.y - city.y))
+        return np.sqrt(abs(self.x - city.x) ** 2 + abs(self.y - city.y) ** 2)
     
     def __repr__(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"
@@ -174,8 +174,20 @@ if __name__ == '__main__':
     cityList = []
     cities = int(input('Digite a quantidade de cidades: '))
     
-    for i in range(0,cities):
-        cityList.append(City(x=int(random.random() * 200), y=int(random.random() * 200)))
-        
-    #print(geneticAlgorithm(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10))
-    geneticAlgorithmPlot(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10)
+    if cities == 0:
+        cities = 5
+        for i in range(0, 10):
+            cityList = []
+            for i in range(0,cities):
+                cityList.append(City(x=int(random.random() * 200), y=int(random.random() * 200)))
+            print(f'Numero de cidades: {cities}')
+            print(geneticAlgorithm(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10))
+            cities = cities * 2
+    else:
+        for i in range(0,cities):
+            cityList.append(City(x=int(random.random() * 200), y=int(random.random() * 200)))
+            
+        #print(geneticAlgorithm(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10))
+        geneticAlgorithmPlot(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10)
+
+    

@@ -6,10 +6,7 @@ class City:
         self.y = y
     
     def distance(self, city):
-        xDis = abs(self.x - city.x)
-        yDis = abs(self.y - city.y)
-        distance = np.sqrt((xDis ** 2) + (yDis ** 2))
-        return distance
+        return np.sqrt(abs(self.x - city.x) + abs(self.y - city.y))
     
     def __repr__(self):
         return "(" + str(self.x) + "," + str(self.y) + ")"
@@ -45,18 +42,17 @@ def createRoute(cityList):
 
 def initialPopulation(popSize, cityList):
     population = []
-
+    
     for i in range(0, popSize):
         population.append(createRoute(cityList))
     return population
 
-
 def rankRoutes(population):
     fitnessResults = {}
+    a = []
     for i in range(0,len(population)):
         fitnessResults[i] = Fitness(population[i]).routeFitness()
     return sorted(fitnessResults.items(), key = operator.itemgetter(1), reverse = True)
-
 
 def selection(popRanked, eliteSize):
     selectionResults = []
@@ -81,7 +77,6 @@ def matingPool(population, selectionResults):
         matingpool.append(population[index])
     return matingpool
 
-
 def breed(parent1, parent2):
     child = []
     childP1 = []
@@ -101,7 +96,6 @@ def breed(parent1, parent2):
     child = childP1 + childP2
     return child
 
-
 def breedPopulation(matingpool, eliteSize):
     children = []
     length = len(matingpool) - eliteSize
@@ -115,7 +109,6 @@ def breedPopulation(matingpool, eliteSize):
         children.append(child)
     return children
 
-
 def mutate(individual, mutationRate):
     for swapped in range(len(individual)):
         if(random.random() < mutationRate):
@@ -128,7 +121,6 @@ def mutate(individual, mutationRate):
             individual[swapWith] = city1
     return individual
 
-
 def mutatePopulation(population, mutationRate):
     mutatedPop = []
     
@@ -136,7 +128,6 @@ def mutatePopulation(population, mutationRate):
         mutatedInd = mutate(population[ind], mutationRate)
         mutatedPop.append(mutatedInd)
     return mutatedPop
-
 
 def nextGeneration(currentGen, eliteSize, mutationRate):
     popRanked = rankRoutes(currentGen)
@@ -149,7 +140,7 @@ def nextGeneration(currentGen, eliteSize, mutationRate):
 def geneticAlgorithm(population, popSize, eliteSize, mutationRate, generations):
     pop = initialPopulation(popSize, population)
     print("Initial distance: " + str(1 / rankRoutes(pop)[0][1]))
-    print(f"Initial routes: \n {pop}")
+    #print(f"Initial routes: \n {pop}")
     
     for i in range(0, generations):
         pop = nextGeneration(pop, eliteSize, mutationRate)
@@ -163,11 +154,17 @@ def geneticAlgorithmPlot(population, popSize, eliteSize, mutationRate, generatio
     pop = initialPopulation(popSize, population)
     progress = []
     progress.append(1 / rankRoutes(pop)[0][1])
+    print("Initial distance: " + str(1 / rankRoutes(pop)[0][1]))
     
     for i in range(0, generations):
         pop = nextGeneration(pop, eliteSize, mutationRate)
         progress.append(1 / rankRoutes(pop)[0][1])
     
+    print("Final distance: " + str(1 / rankRoutes(pop)[0][1]))
+    bestRouteIndex = rankRoutes(pop)[0][0]
+    bestRoute = pop[bestRouteIndex]
+    print(bestRoute)
+
     plt.plot(progress)
     plt.ylabel('Distance')
     plt.xlabel('Generation')
@@ -175,9 +172,10 @@ def geneticAlgorithmPlot(population, popSize, eliteSize, mutationRate, generatio
 
 if __name__ == '__main__':
     cityList = []
-
-    for i in range(0,5):
+    cities = int(input('Digite a quantidade de cidades: '))
+    
+    for i in range(0,cities):
         cityList.append(City(x=int(random.random() * 200), y=int(random.random() * 200)))
-    print(geneticAlgorithm(population=cityList, popSize=10, eliteSize=1, mutationRate=0.01, generations=500))
-    # geneticAlgorithmPlot(population=cityList, popSize=100, eliteSize=20, mutationRate=0.01, generations=500)
-
+        
+    #print(geneticAlgorithm(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10))
+    geneticAlgorithmPlot(population=cityList, popSize=cities*4, eliteSize=cities, mutationRate=0.01, generations=cities*10)
